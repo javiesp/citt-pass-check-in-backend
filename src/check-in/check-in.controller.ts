@@ -3,35 +3,35 @@ import { CheckInService } from './check-in.service';
 import { CreateCheckInDto } from './dto/create-check-in.dto';
 import { UpdateCheckInDto } from './dto/update-check-in.dto';
 import { CheckIn } from './entities/check-in.entity';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('check-in')
 export class CheckInController {
-  constructor(
-    private readonly checkInService: CheckInService) {}
+  constructor(private readonly checkInService: CheckInService) {}
 
   @Post('/create-check-in')
+  @MessagePattern('createCheckIn')
   async createCheckIn(@Body() createCheckInDto: CreateCheckInDto) {
     createCheckInDto.entry_date = new Date();
     return this.checkInService.createCheckIn(createCheckInDto);
   }
 
   @Get('/find-all-check-in')
+  @MessagePattern('findAllByDate')
   findAllByDate() {
     return this.checkInService.findAllByDate();
   }
 
   @Get('/find-by-date-range')
-  async findAllByDateRange(
-    @Query('startDate') startDateStr: string,
-    @Query('endDate') endDateStr: string
-  ): Promise<CheckIn[]> { 
+  @MessagePattern('findAllByDateRange')
+  async findAllByDateRange(query): Promise<CheckIn[]> { 
   
     // Convertir la cadena de fecha de inicio a objeto Date
-    const [startDay, startMonth, startYear] = startDateStr.split('/').map(Number);
+    const [startDay, startMonth, startYear] = query.startDateStr.split('/').map(Number);
     const startDateObj = new Date(startYear, startMonth - 1, startDay);
   
     // Convertir la cadena de fecha de fin a objeto Date
-    const [endDay, endMonth, endYear] = endDateStr.split('/').map(Number);
+    const [endDay, endMonth, endYear] = query.endDateStr.split('/').map(Number);
     const endDateObj = new Date(endYear, endMonth - 1, endDay);
   
     // Obtener la fecha actual
