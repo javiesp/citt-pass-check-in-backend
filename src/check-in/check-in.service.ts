@@ -25,11 +25,15 @@ export class CheckInService {
   }
 
   async findAllByDateRange(startDate: string, endDate: string): Promise<CheckIn[]> {
-    const startDateTime = new Date(`${startDate}T00:00:00.000Z`);
-    const endDateTime = new Date(`${endDate}T23:59:59.999Z`);
-
-    return this.checkInModel.find({ entry_date: { $gte: startDateTime, $lte: endDateTime } }).exec();
+    const startDateTime = new Date(startDate);
+    const endDateTime = new Date(endDate);
+  
+    return this.checkInModel.find({ 
+      entry_date: { $gte: startDateTime, $lte: endDateTime } 
+    }).exec();
   }
+  
+  
 
   async findAllByWeek(): Promise<CheckIn[]> {
     const lastWeekDate = new Date();

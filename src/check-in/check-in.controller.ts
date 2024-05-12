@@ -6,7 +6,8 @@ import { CheckIn } from './entities/check-in.entity';
 
 @Controller('check-in')
 export class CheckInController {
-  constructor(private readonly checkInService: CheckInService) {}
+  constructor(
+    private readonly checkInService: CheckInService) {}
 
   @Post('/create-check-in')
   async createCheckIn(@Body() createCheckInDto: CreateCheckInDto) {
@@ -14,32 +15,37 @@ export class CheckInController {
     return this.checkInService.createCheckIn(createCheckInDto);
   }
 
-  @Get('/find-all-by-date')
+  @Get('/find-all-check-in')
   findAllByDate() {
     return this.checkInService.findAllByDate();
   }
 
-  @Get('/findByDateRange')
+  @Get('/find-by-date-range')
   async findAllByDateRange(
     @Query('startDate') startDateStr: string,
     @Query('endDate') endDateStr: string
-  ): Promise<CheckIn[]> {
-    console.log('esto ingresa ', startDateStr, endDateStr);
+  ): Promise<CheckIn[]> { 
   
-    // Convert the date strings to Date objects
+    // Convertir la cadena de fecha de inicio a objeto Date
     const [startDay, startMonth, startYear] = startDateStr.split('/').map(Number);
     const startDateObj = new Date(startYear, startMonth - 1, startDay);
   
+    // Convertir la cadena de fecha de fin a objeto Date
     const [endDay, endMonth, endYear] = endDateStr.split('/').map(Number);
     const endDateObj = new Date(endYear, endMonth - 1, endDay);
   
-    // Convert Date objects to ISO strings after converting to UTC
+    // Obtener la fecha actual
+    const currentDate = new Date();
+  
+    // Convertir Date objects a ISO strings después de convertir a UTC
     const isoStartDate = startDateObj.toISOString();
     const isoEndDate = endDateObj.toISOString();
-  
-    // Call the service to find check-ins within the date range
+    
+    // Llamar al servicio para encontrar check-ins dentro del rango de fechas
     return this.checkInService.findAllByDateRange(isoStartDate, isoEndDate);
   }
+  
+  
   
   
   
